@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dioney Gabriel</title>
+    <link rel="stylesheet" href="/styles/styles.css">
+</head>
+<body>
+
+<header>
+    <h1><strong style="color: #800080;">Dioney Gabriel</strong></h1>
+</header>
+
+<div class="menu-icon" onclick="toggleMenu()">
+    <div></div>
+    <div></div>
+    <div></div>
+</div>
+
+<nav id="nav">
+    <a href="#home">Home</a>
+    <a href="#about">Sobre Mim</a>
+    <a href="#projects">Projetos</a>
+    <a href="#blog">Blog</a>
+    <a href="#contact">Contato</a>
+</nav>
+
+<div class="container">
+    <section id="home" class="section">
+        <h2>Home</h2>
+        <p>Olá, sou Dioney Gabriel, programador e designer. Bem-vindo ao meu site pessoal!</p>
+    </section>
+
+    <section id="about" class="section">
+        <h2>Sobre Mim</h2>
+        <p>Meu nome é Dioney, tenho 19 anos e atualmente estou imerso nos estudos de <span style="color: #800080;">HTML, CSS, JavaScript e Python</span>. Comecei essa jornada em <span style="color: #800080;">24 de junho de 2022</span>. Sempre fui apaixonado por tecnologia e o mundo da programação me fascina cada vez mais. Aprender essas linguagens me permite criar e dar vida a ideias que antes estavam apenas na minha imaginação.
+
+            Adoro estudar e descobrir coisas novas, embora eu tenha uma tendência a procrastinar no início e fazer várias pausas para assistir a séries. No entanto, essas pausas muitas vezes servem como momentos de <span style="color: #800080;">inspiração e reflexão</span>, ajudando-me a voltar aos estudos com uma perspectiva renovada.
+            
+            Meu objetivo é <span style="color: #800080;">dominar essas ferramentas</span> para poder desenvolver projetos inovadores e contribuir de forma significativa para a comunidade tecnológica. Cada linha de código escrita, cada erro corrigido, cada funcionalidade implementada é um passo em direção ao meu <span style="color: #800080;">crescimento como programador</span>.
+            
+            Além disso, acredito que o processo de aprendizagem é contínuo e infinito. Estou sempre em busca de <span style="color: #800080;">novos desafios</span> e oportunidades para expandir meus conhecimentos. Essa <span style="color: #800080;">determinação e curiosidade</span> são o que me impulsionam a superar as dificuldades e a persistir, mesmo quando o caminho parece difícil.
+            
+            Em resumo, minha jornada na programação é alimentada por uma mistura de <span style="color: #800080;">paixão, curiosidade e resiliência</span>. Estou empolgado para ver onde essa jornada me levará e as inúmeras possibilidades que se abrirão à medida que continuo a aprender e crescer.</p>
+    </section>
+
+    <section id="projects" class="section projects">
+        <h2>Projetos</h2>
+        <div class="project" onclick="openModal('modalLearnAnything')">
+            <h3>Learn Anything</h3>
+            <p>Learn Anything é um projeto open source que permite aos usuários pesquisar e aprender sobre diversos tópicos escolares usando o ChatGPT, e foi desenvolvido no intuito de fornecer acesso ao GPT4 e diminuir o uso, uma vez que toda pesquisa fica salva no banco de dados para pesquisa futura de todos usuarios.</p>
+        </div>
+        <div class="project" onclick="openModal('modalProject2')">
+            <h3>GitBrowse</h3>
+            <p>GitBrowse é um projeto desenvolvido para facilitar a navegação e o gerenciamento de repositórios no GitHub diretamente pelo terminal. Com uma interface intuitiva, o GitBrowse permite que usuários pesquisem por repositórios, visualizem seus conteúdos e baixem arquivos de maneira simplificada.</p>
+        </div>
+    </section>
+
+    <section id="blog" class="section">
+        <h2>Blog</h2>
+        <p>Em breve, você encontrará artigos interessantes aqui!</p>
+    </section>
+
+    <section id="contact" class="section">
+        <h2>Contato</h2>
+        <div class="contact-form">
+            <form action="#" method="POST">
+                <input type="text" name="name" placeholder="Seu Nome" required>
+                <input type="email" name="email" placeholder="Seu Email" required>
+                <textarea name="message" placeholder="Sua Mensagem" required></textarea>
+                <button type="submit">Enviar</button>
+            </form>
+            <div class="social-links">
+                <p>Ou me encontre nas redes sociais:</p>
+                <a href="https://github.com/SimpleDioney" target="_blank">GitHub</a> |
+                <a href="https://instagram.com/lil_dioney" target="_blank">Instagram</a>
+            </div>
+        </div>
+    </section>
+</div>
+
+<footer>
+    <p>&copy; 2024 Dioney Gabriel. Todos os direitos reservados.</p>
+</footer>
+
+<!-- Modal Learn Anything -->
+<div id="modalLearnAnything" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('modalLearnAnything')">&times;</span>
+        <h1 style="text-align: center;"><strong style="color: #800080;">Learn Anything</strong></h1>
+        <div class="carousel" id="carouselLearnAnything">
+            <button class="prev" onclick="prevImage('carouselLearnAnything')">&lt;</button>
+            <img src="/LearnAnything/image.png" alt="Imagem 1" class="active">
+            <img src="/LearnAnything/image2.png" alt="Imagem 2">
+            <button class="next" onclick="nextImage('carouselLearnAnything')">&gt;</button>
+        </div>
+        <p><section>
+            <h2 style="text-align: center;">Sobre</h2>
+            <p><span style="color: #800080;">Learn Anything</span> é um projeto open-source inovador voltado para a educação e aprendizado inteligente, utilizando o poderoso GPT-4o para fornecer respostas e explicações detalhadas sobre qualquer assunto que os usuários desejem aprender.</p>
+            <p>O objetivo principal do Learn Anything é democratizar o acesso ao conhecimento e oferecer uma plataforma onde qualquer pessoa pode fazer perguntas sobre diversas áreas do conhecimento e receber respostas detalhadas, bem estruturadas e de fácil compreensão.</p>
+        </section>
+        <section>
+            <h2 style="text-align: center;">Principais Funcionalidades</h2>
+            <ol>
+                <li><span style="color: #800080;">Interação com o ChatGPT</span>: Utiliza ao ChatGPT para fornecer respostas em tempo real para as perguntas dos usuários.</li>
+                <li><span style="color: #800080;">Categorias de Conhecimento</span> Organiza perguntas e respostas em categorias escolares, facilitando a navegação e o aprendizado em diferentes áreas.</li>
+                <li><span style="color: #800080;">Busca por Conteúdo</span>: Sistema de busca eficiente que permite encontrar respostas específicas dentro das categorias de conhecimento.</li>
+                <li><span style="color: #800080;">Sessões Persistentes</span>: Mantém a sessão aberta com o ChatGPT para garantir continuidade e eficiência nas respostas.</li>
+                <li><span style="color: #800080;">Sistema de Feedback</span>: Indica visualmente quando o sistema está processando a solicitação e buscando a resposta.</li>
+                <li><span style="color: #800080;">Projeto Open-Source</span>: Código-fonte disponível no GitHub para colaboração e melhorias contínuas.</li>
+            </ol>
+        </section>
+        <section>
+            <h2 style="text-align: center;">Como Utilizar o <span style="color: #800080;">Learn Anything</span></h2>
+            <ol>
+                <li><span style="color: #800080;">Início Rápido</span>: Digite sua pergunta no campo de busca ou selecione uma categoria do menu para começar.</li>
+                <li><span style="color: #800080;">Perguntas Específicas</span>: Para obter melhores resultados, faça perguntas específicas relacionadas ao tópico de interesse.</li>
+                <li><span style="color: #800080;">Exploração por Categorias</span>: Navegue pelas categorias disponíveis para explorar diferentes áreas do conhecimento.</li>
+                <li><span style="color: #800080;">Refine sua Busca</span>: Use a caixa de pesquisa para encontrar respostas específicas dentro das categorias.</li>
+            </ol>
+        </section></p>
+        <div class="preview-images" id="previewLearnAnything">
+            <img src="/LearnAnything/image.png" alt="Imagem 1" class="active" onclick="showImage('carouselLearnAnything', 0)">
+            <img src="/LearnAnything/image2.png" alt="Imagem 2" onclick="showImage('carouselLearnAnything', 1)">
+        </div>
+        <div class="buttons">
+            <a href="https://github.com/SimpleDioney/learn-anything" target="_blank">Ver no GitHub</a>
+            <a href="https://9e54-2804-1b0-1902-fb86-ed7c-c7b2-7518-fab8.ngrok-free.app/" target="_blank">Ver Projeto</a>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Projeto 2 -->
+<div id="modalProject2" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('modalProject2')">&times;</span>
+        <h1 style="text-align: center;">GitBrowse</h1>
+        <div class="carousel" id="carouselProject2">
+            <button class="prev" onclick="prevImage('carouselProject2')">&lt;</button>
+            <img src="/GitBrowse/image.png" alt="Imagem 1" class="active">
+            <img src="/GitBrowse/image2.png" alt="Imagem 2">
+            <img src="/GitBrowse/image3.png" alt="Imagem 3">
+            <button class="next" onclick="nextImage('carouselProject2')">&gt;</button>
+        </div>
+        <p><section>
+            <h2 style="text-align: center;">Sobre</h2>
+            <p><span style="color: #800080;">GitBrowse</span> é um projeto desenvolvido para facilitar a navegação e o gerenciamento de repositórios no GitHub diretamente pelo terminal. Com uma interface intuitiva, o GitBrowse permite que usuários pesquisem por repositórios, visualizem seus conteúdos e baixem arquivos de maneira simplificada.</p>
+        </section>
+        <section>
+            <h2 style="text-align: center;">Principais Funcionalidades</h2>
+            <ol>
+                <li><span style="color: #800080;">Busca de Usuários do GitHub</span>: Permite ao usuário buscar e listar repositórios de qualquer usuário do GitHub. Exibe detalhes dos repositórios e permite navegar pelos arquivos e diretórios.</li>
+                <li><span style="color: #800080;">Download de Arquivos</span>: Facilita o download de arquivos individuais dos repositórios diretamente do terminal. Suporta downloads paralelos para maior eficiência.</li>
+                <li><span style="color: #800080;">Clonagem de Repositórios</span>: Oferece uma opção para clonar repositórios completos, permitindo que os usuários tenham uma cópia local para desenvolvimento e análise.</li>
+                <li><span style="color: #800080;">Personalização de Temas</span>: Permite a customização de cores e mensagens exibidas pelo terminal. Os usuários podem salvar suas configurações personalizadas como temas e carregá-los posteriormente.</li>
+                <li><span style="color: #800080;">Detecção de Conexão com a Internet</span>: Monitora a conexão com a internet, informando ao usuário sobre a disponibilidade de conexão para download de arquivos e clonagem de repositórios.</li>
+            </ol>
+        </section>
+        <section>
+            <h2 style="text-align: center;">Como Utilizar o <span style="color: #800080;">GitBrowse</span></h2>
+            <ol>
+                <li><span style="color: #800080;">Iniciar o GitBrowse</span>: Execute o script principal para iniciar a interface do GitBrowse. O menu inicial oferece opções para buscar usuários ou acessar as configurações.</li>
+                <li><span style="color: #800080;">Buscar Usuário do GitHub</span>: Digite o nome de usuário do GitHub para listar seus repositórios. Navegue pelos repositórios e visualize os arquivos disponíveis.</li>
+                <li><span style="color: #800080;">Download de Arquivos</span>: Selecione os arquivos que deseja baixar a partir da lista de arquivos do repositório. Os arquivos serão baixados para o diretório especificado na configuração.</li>
+                <li><span style="color: #800080;">Clonar Repositórios</span>: Opção para clonar repositórios inteiros para um diretório local. Útil para desenvolvedores que desejam trabalhar com uma cópia local dos repositórios.</li>
+                <li><span style="color: #800080;">Personalização de Temas</span>: Acesse o menu de configurações para alterar cores e mensagens. Salve suas configurações personalizadas como temas que podem ser carregados posteriormente.</li>
+            </ol>
+        </section></p>
+        <div class="preview-images" id="previewProject2">
+            <img src="/GitBrowse/image.png" alt="Imagem 1" class="active" onclick="showImage('carouselProject2', 0)">
+            <img src="/GitBrowse/image2.png" alt="Imagem 2" onclick="showImage('carouselProject2', 1)">
+            <img src="/GitBrowse/image3.png" alt="Imagem 3" onclick="showImage('carouselProject2', 2)">
+        </div>
+        <div class="buttons">
+            <a href="https://github.com/SimpleDioney/GitBrowse" target="_blank">Ver no GitHub</a>
+            
+        </div>
+    </div>
+</div>
+
+<script src="/script/script.js"></script>
+
+</body>
+</html>
