@@ -7,7 +7,6 @@
             margin: 0;
             padding: 0;
             overflow-x: hidden;
-                text-align: justify;
         }
         .modal-open {
             overflow: hidden; /* Desativar o scrollbar do body */
