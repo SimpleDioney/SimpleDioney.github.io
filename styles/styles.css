@@ -7,6 +7,7 @@
             margin: 0;
             padding: 0;
             overflow-x: hidden;
+            text-align: justify;
         }
         .modal-open {
             overflow: hidden; /* Desativar o scrollbar do body */
@@ -90,15 +91,18 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
-        .section {
-            margin-bottom: 2rem;
-        }
-        .section h2 {
-            font-size: 2rem;
-            color: #800080;
-            border-bottom: 2px solid #800080;
-            padding-bottom: 0.5rem;
+        .blog-post {
+            background-color: #2a2a2a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 2rem;
             margin-bottom: 1.5rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+            display: block;
+            color: #e0e0e0;
+            text-decoration: none;
         }
         .projects .project {
             background-color: #2a2a2a;
@@ -327,6 +331,48 @@
             opacity: 1;
             transform: scale(1.1);
         }
+        .blog-post:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+        }
+        .blog-post::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(128, 0, 128, 0.3);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .blog-post:hover::after {
+            opacity: 1;
+        }
+        
+        .blog-post h3 {
+            margin-top: 0;
+        }
+        
+        .blog-post p {
+            margin: 10px 0;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2; /* Número máximo de linhas */
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .blog-post a {
+            color: #6200ea;
+            text-decoration: none;
+        }
+        
+        .blog-post a:hover {
+            text-decoration: underline;
+        }
+        
+        
         @media (max-width: 768px) {
             nav {
                 flex-direction: column;

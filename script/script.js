@@ -15,7 +15,7 @@ function closeModal(modalId) {
     document.getElementById(modalId).style.display = "none";
 }
 
-document.querySelectorAll('nav a, .projects .project').forEach(item => {
+document.querySelectorAll('nav a, .projects .project, .blog-post').forEach(item => {
     item.addEventListener('mousemove', function(e) {
         for (let i = 0; i < 10; i++) {
             let particle = document.createElement('span');

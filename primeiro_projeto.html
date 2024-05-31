@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Primeiro Projeto em Python - Dioney Gabriel</title>
+    <link rel="stylesheet" href="/styles/blog-post-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header>
+    <h1><strong style="color: #800080;">Dioney Gabriel</strong></h1>
+</header>
+<div class="menu-icon" onclick="toggleMenu()">
+    <div></div>
+    <div></div>
+    <div></div>
+</div>
+
+<nav id="nav">
+    <a href="index.html">Home</a>
+    <a href="index.html#about">Sobre Mim</a>
+    <a href="index.html#projects">Projetos</a>
+    <a href="index.html#blog">Blog</a>
+    <a href="index.html#contact">Contato</a>
+</nav>
+
+<div class="container">
+    <article class="blog-post">
+        <h2 style="text-align: center;">Meu Primeiro Projeto em Python</h2>
+        <p class="date">31 de Maio de 2024</p>
+        <p>Desenvolver meu primeiro projeto em Python foi uma experiência incrível. Neste post, compartilho minhas descobertas e aprendizados ao longo do desenvolvimento.</p>
+        
+        <h3>Sobre o Projeto</h3>
+        <p>Esse projeto foi criado com o intuito de praticar operações com matrizes e cálculos financeiros básicos. A aplicação é executada no terminal e permite ao usuário escolher entre várias opções, incluindo:</p>
+        <ul>
+            <li>Calcular o determinante de uma matriz 2x2 ou 3x3</li>
+            <li>Somar e subtrair matrizes 2x2</li>
+            <li>Multiplicar matrizes 2x2</li>
+            <li>Calcular juros simples e compostos</li>
+        </ul>
+
+        <h3>Funcionalidades</h3>
+        <p>O código utiliza um loop <code>while</code> para exibir um menu de opções para o usuário. Dependendo da escolha, diferentes operações são realizadas:</p>
+        <pre><code><span class="keyword">while</span> <span class="keyword">True</span>:
+            <span class="function">print</span>(<span class="string">'\nOpções:\n1) 2x2\n2) 3x3\n3) Matriz a - b (2x2)\n4) Matriz a + b (2x2)\n5) matriz a x b (2x2)\n6) Calculo de juros simples\n7) Calculo de juros compostos'</span>)
+            matriz = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Escolha o tipo de matriz: '</span>))
+            <span class="keyword">if</span> matriz == <span class="number">1</span>:
+                <span class="function">print</span>(<span class="string">'|a b|\n|c d|'</span>)
+                n1 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de a:'</span>))
+                n2 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de b: '</span>))
+                n3 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de c: '</span>))
+                n4 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de d: '</span>))
+                <span class="function">print</span>(<span class="string">f'A matriz a ser calculada é:\n\n{n1} {n2}\n{n3} {n4}\n'</span>)
+                calc = (n1 * n4) - (n2 * n3)
+                princ = n1 * n4
+                secun = n2 * n3
+                <span class="function">print</span>(<span class="string">f'Diagonal principal: {n1}*{n4}\nDiagonal secundaria: {n2}*{n3}\nSubstração para descobrir o determinante (Principal - secundaria): {princ} - {secun}\nO determinante da matriz é: {calc}'</span>)
+            <span class="keyword">elif</span> matriz == <span class="number">2</span>:
+                <span class="function">print</span>(<span class="string">'|a b c|\n|d e f|\n|g h i|'</span>)
+                n1 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de a: '</span>))
+                n2 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de b: '</span>))
+                n3 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de c: '</span>))
+                n4 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de d: '</span>))
+                n5 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de e: '</span>))
+                n6 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de f: '</span>))
+                n7 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de g: '</span>))
+                n8 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de h: '</span>))
+                n9 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de i: '</span>))
+                <span class="function">print</span>(<span class="string">f'A matriz a ser calculada é:\n|{n1} {n2} {n3}|\n|{n4} {n5} {n6}|\n|{n7} {n8} {n9}|\n'</span>)
+                calc = ((n1 * n5 * n9) + (n2 * n6 * n7) + (n3 * n4 * n8)) - ((n3 * n5 * n7) + (n1 * n6 * n8) + (n2 * n4 * n9))
+                princ = ((n1 * n5 * n9) + (n2 * n6 * n7) + (n3 * n4 * n8))
+                secun = ((n3 * n5 * n7) + (n1 * n6 * n8) + (n2 * n4 * n9))
+                <span class="function">print</span>(<span class="string">f'Diagonal principal: {n1}*{n5}*{n9} + {n2}*{n6}*{n7} + {n3}*{n4}*{n8} = {princ}\nDiagonal secundária: {n3}*{n5}*{n7} + {n1}*{n6}*{n8} + {n2}*{n4}*{n9} = {secun}\nSubtração para descobrir o determinante (principal - secundaria): {princ} - {secun}\n\nO determinante é: {calc}'</span>)
+            <span class="keyword">elif</span> matriz == <span class="number">3</span>:
+                <span class="function">print</span>(<span class="string">'|a b| |a2 b2|\n|c d|-|c2 d2|'</span>)
+                n1 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de a: '</span>))
+                n2 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de b: '</span>))
+                n3 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de c: '</span>))
+                n4 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de d: '</span>))
+                n5 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de a2: '</span>))
+                n6 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de b2: '</span>))
+                n7 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de c2: '</span>))
+                n8 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de d2: '</span>))
+                a = n1 - n5
+                b = n2 - n6
+                c = n3 - n7
+                d = n4 - n8
+                <span class="function">print</span>(<span class="string">f'A matriz gerada é:\n|{a} {b}|\n|{c} {d}|'</span>)
+            <span class="keyword">elif</span> matriz == <span class="number">4</span>:
+                <span class="function">print</span>(<span class="string">'|a b| |a2 b2|\n|c d|+|c2 d2|'</span>)
+                n1 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de a: '</span>))
+                n2 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de b: '</span>))
+                n3 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de c: '</span>))
+                n4 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de d: '</span>))
+                n5 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de a2: '</span>))
+                n6 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de b2: '</span>))
+                n7 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de c2: '</span>))
+                n8 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de d2: '</span>))
+                a = n1 + n5
+                b = n2 + n6
+                c = n3 + n7
+                d = n4 + n8
+                <span class="function">print</span>(<span class="string">f'A matriz gerada é:\n|{a} {b}|\n|{c} {d}|'</span>)
+            <span class="keyword">elif</span> matriz == <span class="number">5</span>:
+                <span class="function">print</span>(<span class="string">'|a b| |a2 b2|\n|c d|*|c2 d2|'</span>)
+                n1 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de a: '</span>))
+                n2 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de b: '</span>))
+                n3 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de c: '</span>))
+                n4 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de d: '</span>))
+                n5 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de a2: '</span>))
+                n6 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de b2: '</span>))
+                n7 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de c2: '</span>))
+                n8 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor de d2: '</span>))
+                l1c1 = (n1 * n5) + (n2 * n7)
+                l1c2 = (n1 * n6) + (n2 * n8)
+                l2c1 = (n3 * n5) + (n4 * n7)
+                l2c2 = (n3 * n6) + (n4 * n8)
+                <span class="function">print</span>(<span class="string">f'A matriz gerada é:\n|{l1c1} {l1c2}|\n|{l2c1} {l2c2}|'</span>)
+            <span class="keyword">elif</span> matriz == <span class="number">6</span>:
+                <span class="function">print</span>(<span class="string">'Formula juros simples: J = C*i*t (J= Juros | C= capital | i= taxa de juros | t= tempo)'</span>)
+                c = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor do capital: '</span>))
+                taxa = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite a taxa de juros: '</span>))
+                t = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o tempo (em meses): '</span>))
+                i = taxa/<span class="number">100</span>
+                juros = c * i * t
+                montante = c + juros
+                <span class="function">print</span>(<span class="string">f'O valor dos juros da aplicação é de {juros}\nE o montante a ser resgatado é de {montante}.'</span>)
+            <span class="keyword">elif</span> matriz == <span class="number">7</span>:
+                <span class="function">print</span>(<span class="string">'Formula juros compostos: M = C * (1 + i)n (M= Montante | C= capital | i= taxa de juros | n= tempo)'</span>)
+                c = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o valor do capital: '</span>))
+                taxa = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite a taxa de juros (use . no lugar de ,): '</span>))
+                t = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">'Digite o tempo (em meses): '</span>))
+                i = taxa/<span class="number">100</span>
+                juros = c * ((<span class="number">1</span> + i) ** t)
+                montante = c + juros
+                <span class="function">print</span>(<span class="string">f'O valor dos juros da aplicação é de {juros:1f}\nE o montante a ser resgatado é de {montante:1f}.'</span>)
+                </code></pre>
+
+        <h3>Desafios Encontrados</h3>
+        <p>Um dos maiores desafios foi entender e implementar corretamente as fórmulas para o cálculo do determinante, eu ja sabia como faze-la mas coloca-la em pratica no python foi um grande desafio, especialmente para a matriz 3x3. Também foi um desafio garantir que todas as entradas do usuário fossem validadas e que o programa lidasse corretamente com valores inválidos.</p>
+
+        <h3>Conclusão</h3>
+        <p>Este projeto foi uma ótima introdução ao Python e me ajudou a entender melhor como manipular matrizes e realizar cálculos financeiros.</p>
+    </article>
+</div>
+
+<script src="script/script.js"></script>
+
+<footer>
+    <p>&copy; 2024 Dioney Gabriel. Todos os direitos reservados.</p>
+</footer>
+
+</body>
+</html>
