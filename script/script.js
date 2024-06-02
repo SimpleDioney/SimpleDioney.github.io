@@ -33,6 +33,7 @@ document.querySelectorAll('nav a, .projects .project, .blog-post').forEach(item 
         }
     });
 });
+
 window.onscroll = function() {scrollFunction()};
 function scrollFunction() {
   if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
@@ -41,11 +42,11 @@ function scrollFunction() {
     document.getElementById("topBtn").style.display = "none";
   }
 }
+
 function topFunction() {
   document.body.scrollTop = 0;
   document.documentElement.scrollTop = 0;
 }
-
 
 const ctx = document.getElementById('skillsChart').getContext('2d');
 const skillsChart = new Chart(ctx, {
@@ -54,7 +55,7 @@ const skillsChart = new Chart(ctx, {
     labels: ['HTML', 'CSS', 'JavaScript', 'Python'],
     datasets: [{
       label: 'Nível de Proficiência',
-      data: [70, 85, 60, 90],
+      data: [85, 85, 60, 90],
       backgroundColor: [
         'rgba(128, 0, 128, 0.6)',
         'rgba(75, 0, 130, 0.6)',
@@ -103,8 +104,48 @@ const skillsChart = new Chart(ctx, {
   }
 });
 
+fetch('https://api.github.com/users/SimpleDioney/repos')
+  .then(response => response.json())
+  .then(data => {
+    // Ordena os repositórios pela data de atualização mais recente
+    data.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+    
+    const githubFeed = document.getElementById('github-feed');
+    data.slice(0, 8).forEach(repo => {  // Ajuste para exibir mais repositórios
+      const repoElement = document.createElement('div');
+      repoElement.classList.add('github-repo');
+      repoElement.innerHTML = `
+        <a href="${repo.html_url}" target="_blank">${repo.name}</a>
+        <p>${repo.description ? repo.description : 'Sem descrição disponível'}</p>
+        <div class="repo-info">
+          <span class="stars">⭐ ${repo.stargazers_count}</span>
+          <span>Atualizado em: ${new Date(repo.updated_at).toLocaleDateString()}</span>
+        </div>
+      `;
+      githubFeed.appendChild(repoElement);
+    });
 
-
+    // Adiciona o efeito de partículas aos repositórios do GitHub
+    document.querySelectorAll('.github-repo').forEach(item => {
+      item.addEventListener('mousemove', function(e) {
+        for (let i = 0; i < 10; i++) {
+          let particle = document.createElement('span');
+          particle.classList.add('particle');
+          let x = e.offsetX;
+          let y = e.offsetY;
+          particle.style.left = x + 'px';
+          particle.style.top = y + 'px';
+          particle.style.setProperty('--x', `${(Math.random() - 0.5) * 100}px`);
+          particle.style.setProperty('--y', `${(Math.random() - 0.5) * 100}px`);
+          item.appendChild(particle);
+          setTimeout(() => {
+            particle.remove();
+          }, 1000);
+        }
+      });
+    });
+  })
+  .catch(error => console.error('Erro ao carregar repositórios do GitHub:', error));
 
 function nextImage(carouselId) {
     const carousel = document.getElementById(carouselId);
