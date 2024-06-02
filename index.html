@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dioney Gabriel</title>
     <link rel="stylesheet" href="/styles/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="./script/blog.js"></script>
 </head>
 <body>
-
+    <button onclick="topFunction()" id="topBtn" title="Go to top">↑</button>
 <header>
     <h1><strong style="color: #800080;">Dioney Gabriel</strong></h1>
 </header>
@@ -43,6 +45,9 @@
             Além disso, acredito que o processo de aprendizagem é contínuo e infinito. Estou sempre em busca de <span style="color: #800080;">novos desafios</span> e oportunidades para expandir meus conhecimentos. Essa <span style="color: #800080;">determinação e curiosidade</span> são o que me impulsionam a superar as dificuldades e a persistir, mesmo quando o caminho parece difícil.
             
             Em resumo, minha jornada na programação é alimentada por uma mistura de <span style="color: #800080;">paixão, curiosidade e resiliência</span>. Estou empolgado para ver onde essa jornada me levará e as inúmeras possibilidades que se abrirão à medida que continuo a aprender e crescer.</p>
+            <div class="chart-container">
+                <canvas id="skillsChart"></canvas>
+              </div>
     </section>
 
     <section id="projects" class="section projects">
@@ -56,18 +61,12 @@
             <p>GitBrowse é um projeto desenvolvido para facilitar a navegação e o gerenciamento de repositórios no GitHub diretamente pelo terminal. Com uma interface intuitiva, o GitBrowse permite que usuários pesquisem por repositórios, visualizem seus conteúdos e baixem arquivos de maneira simplificada.</p>
         </div>
     </section>
-
+    
     <section id="blog" class="section">
         <h2>Blog</h2>
-        <a href="primeiro_projeto.html" class="blog-post">
-            <h3>Meu Primeiro Projeto em Python</h3>
-            <p>Data: 31 de Maio de 2024</p>
-            <p>Desenvolver meu primeiro projeto em Python foi uma experiência incrível. Neste post, compartilho minhas descobertas e aprendizados ao longo do desenvolvimento.</p>
-        </a>
-    </section>
-    
-    
-
+        <div id="blogPosts"></div>
+      </section>
+      
     <section id="contact" class="section">
         <h2>Contato</h2>
         <div class="contact-form">
@@ -132,7 +131,7 @@
         </div>
         <div class="buttons">
             <a href="https://github.com/SimpleDioney/learn-anything" target="_blank">Ver no GitHub</a>
-            <a href="https://140f-2804-1b0-1902-fb86-648e-dce9-3c28-d37b.ngrok-free.app/" target="_blank">Ver Projeto</a>
+            <a href="https://9e54-2804-1b0-1902-fb86-ed7c-c7b2-7518-fab8.ngrok-free.app/" target="_blank">Ver Projeto</a>
         </div>
     </div>
 </div>

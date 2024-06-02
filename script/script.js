@@ -33,6 +33,78 @@ document.querySelectorAll('nav a, .projects .project, .blog-post').forEach(item 
         }
     });
 });
+window.onscroll = function() {scrollFunction()};
+function scrollFunction() {
+  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+    document.getElementById("topBtn").style.display = "block";
+  } else {
+    document.getElementById("topBtn").style.display = "none";
+  }
+}
+function topFunction() {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+}
+
+
+const ctx = document.getElementById('skillsChart').getContext('2d');
+const skillsChart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: ['HTML', 'CSS', 'JavaScript', 'Python'],
+    datasets: [{
+      label: 'Nível de Proficiência',
+      data: [70, 85, 60, 90],
+      backgroundColor: [
+        'rgba(128, 0, 128, 0.6)',
+        'rgba(75, 0, 130, 0.6)',
+        'rgba(139, 0, 139, 0.6)',
+        'rgba(255, 0, 255, 0.6)'
+      ],
+      borderColor: [
+        'rgba(128, 0, 128, 1)',
+        'rgba(75, 0, 130, 1)',
+        'rgba(139, 0, 139, 1)',
+        'rgba(255, 0, 255, 1)'
+      ],
+      borderWidth: 1,
+      borderRadius: 5,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        ticks: {
+          color: '#e0e0e0',
+        },
+        grid: {
+          display: false,
+        }
+      },
+      y: {
+        beginAtZero: true,
+        ticks: {
+          color: '#e0e0e0',
+        },
+        grid: {
+          color: 'rgba(128, 0, 128, 0.1)',
+        }
+      }
+    },
+    plugins: {
+      legend: {
+        labels: {
+          color: '#e0e0e0',
+        }
+      }
+    }
+  }
+});
+
+
+
 
 function nextImage(carouselId) {
     const carousel = document.getElementById(carouselId);
