@@ -549,7 +549,7 @@ html {
   color: #f44336;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1400px) {
     header {
       background-color: #181818;
     }
