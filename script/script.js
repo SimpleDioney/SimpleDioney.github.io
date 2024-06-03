@@ -104,6 +104,44 @@ const skillsChart = new Chart(ctx, {
   }
 });
 
+document.getElementById('contactForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Impede o envio padrão do formulário
+
+    const form = event.target;
+    const formData = new FormData(form);
+    const formMessage = document.getElementById('formMessage');
+
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'Accept': 'application/json'
+        }
+    }).then(response => {
+        if (response.ok) {
+            formMessage.textContent = "Mensagem enviada com sucesso!";
+            formMessage.classList.add('success');
+            formMessage.classList.remove('error');
+            form.reset();
+        } else {
+            return response.json().then(data => {
+                if (data.errors) {
+                    formMessage.textContent = data.errors.map(error => error.message).join(", ");
+                } else {
+                    formMessage.textContent = "Ocorreu um erro ao enviar a mensagem.";
+                }
+                formMessage.classList.add('error');
+                formMessage.classList.remove('success');
+            });
+        }
+    }).catch(error => {
+        formMessage.textContent = "Ocorreu um erro ao enviar a mensagem.";
+        formMessage.classList.add('error');
+        formMessage.classList.remove('success');
+    });
+});
+
+
 fetch('https://api.github.com/users/SimpleDioney/repos')
   .then(response => response.json())
   .then(data => {
@@ -112,14 +150,18 @@ fetch('https://api.github.com/users/SimpleDioney/repos')
     
     const githubFeed = document.getElementById('github-feed');
     data.slice(0, 8).forEach(repo => {  // Ajuste para exibir mais repositórios
-      const repoElement = document.createElement('div');
+      const repoElement = document.createElement('a');
+      repoElement.href = repo.html_url;
+      repoElement.target = '_blank';
       repoElement.classList.add('github-repo');
       repoElement.innerHTML = `
-        <a href="${repo.html_url}" target="_blank">${repo.name}</a>
-        <p>${repo.description ? repo.description : 'Sem descrição disponível'}</p>
-        <div class="repo-info">
-          <span class="stars">⭐ ${repo.stargazers_count}</span>
-          <span>Atualizado em: ${new Date(repo.updated_at).toLocaleDateString()}</span>
+        <div>
+          <a>${repo.name}</a>
+          <p>${repo.description ? repo.description : 'Sem descrição disponível.'}</p>
+          <div class="repo-info">
+            <span class="stars">⭐ ${repo.stargazers_count}</span>
+            <span>Atualizado em: ${new Date(repo.updated_at).toLocaleDateString()}</span>
+          </div>
         </div>
       `;
       githubFeed.appendChild(repoElement);
