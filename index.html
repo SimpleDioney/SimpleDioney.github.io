@@ -5,11 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dioney Gabriel</title>
     <link rel="stylesheet" href="/styles/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="./script/blog.js"></script>
 </head>
 <body>
-    <button onclick="topFunction()" id="topBtn" title="Go to top">↑</button>
+    <body>
+        <button onclick="topFunction()" id="topBtn" title="Voltar ao topo"><i class="fas fa-arrow-up"></i></button>
+
     <header>
         <div class="header-title">
             <h1><strong style="color: #800080;">Dioney Gabriel</strong></h1>
@@ -63,6 +67,17 @@
         </div>
     </section>
     
+    <section id="resume" class="section">
+        <h2>Baixe Meu Currículo</h2>
+        <div class="resume-download">
+            <p>Interessado no meu trabalho? Baixe meu currículo para saber mais sobre minhas experiências e habilidades.</p>
+            <a href="curriculum/Dioney-Almeida.pdf" download class="btn">
+                <i class="fas fa-file-download"></i> Baixar Currículo
+            </a>
+        </div>
+    </section>
+    
+
     <section id="blog" class="section">
         <h2>Blog</h2>
         <div id="blogPosts"></div>
@@ -75,8 +90,7 @@
           <div id="github-feed"></div>
         </div>
       </section>
-      
-      
+    
       <section id="contact" class="section">
         <h2>Contato</h2>
         <div class="contact-form">

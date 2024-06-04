@@ -50,59 +50,68 @@ function topFunction() {
 
 const ctx = document.getElementById('skillsChart').getContext('2d');
 const skillsChart = new Chart(ctx, {
-  type: 'bar',
-  data: {
-    labels: ['HTML', 'CSS', 'JavaScript', 'Python'],
-    datasets: [{
-      label: 'Nível de Proficiência',
-      data: [85, 85, 60, 90],
-      backgroundColor: [
-        'rgba(128, 0, 128, 0.6)',
-        'rgba(75, 0, 130, 0.6)',
-        'rgba(139, 0, 139, 0.6)',
-        'rgba(255, 0, 255, 0.6)'
-      ],
-      borderColor: [
-        'rgba(128, 0, 128, 1)',
-        'rgba(75, 0, 130, 1)',
-        'rgba(139, 0, 139, 1)',
-        'rgba(255, 0, 255, 1)'
-      ],
-      borderWidth: 1,
-      borderRadius: 5,
-    }]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      x: {
-        ticks: {
-          color: '#e0e0e0',
-        },
-        grid: {
-          display: false,
-        }
-      },
-      y: {
-        beginAtZero: true,
-        ticks: {
-          color: '#e0e0e0',
-        },
-        grid: {
-          color: 'rgba(128, 0, 128, 0.1)',
-        }
-      }
+    type: 'bar',
+    data: {
+        labels: ['HTML', 'CSS', 'JavaScript', 'Python'],
+        datasets: [{
+            label: 'Nível de Proficiência',
+            data: [85, 85, 60, 90],
+            backgroundColor: [
+                'rgba(128, 0, 128, 0.6)',
+                'rgba(75, 0, 130, 0.6)',
+                'rgba(139, 0, 139, 0.6)',
+                'rgba(255, 0, 255, 0.6)'
+            ],
+            borderColor: [
+                'rgba(128, 0, 128, 1)',
+                'rgba(75, 0, 130, 1)',
+                'rgba(139, 0, 139, 1)',
+                'rgba(255, 0, 255, 1)'
+            ],
+            borderWidth: 1,
+            borderRadius: 5,
+        }]
     },
-    plugins: {
-      legend: {
-        labels: {
-          color: '#e0e0e0',
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            x: {
+                ticks: {
+                    color: '#e0e0e0',
+                },
+                grid: {
+                    display: false,
+                }
+            },
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    color: '#e0e0e0',
+                },
+                grid: {
+                    color: 'rgba(128, 0, 128, 0.1)',
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#e0e0e0',
+                }
+            },
+            title: {
+                display: true,
+                text: 'Habilidades de Programação',
+                color: '#e0e0e0',
+                font: {
+                    size: 18
+                }
+            }
         }
-      }
     }
-  }
 });
+
 
 document.getElementById('contactForm').addEventListener('submit', function(event) {
     event.preventDefault(); // Impede o envio padrão do formulário
