@@ -325,88 +325,89 @@
         };
 
         const viewVideo = async (videoId) => {
-            showLoading();
-            try {
-                const response = await fetch(`${API_URL}/videos/${videoId}`, {
-                    headers: currentUser ? {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    } : {}
-                });
-                const video = await response.json();
-                
-                const videoPage = document.getElementById('videoPage');
-                videoPage.innerHTML = `
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                        <video 
-                            src="${API_URL}/uploads/${video.filename}"
-                            controls
-                            class="w-full aspect-video"
-                            onplay="incrementViews(${video.id})"
-                        ></video>
-                        <div class="p-6">
-                            <h1 class="text-2xl font-bold">${video.title}</h1>
-                            <div class="mt-2 flex items-center justify-between">
-                                <div class="flex items-center space-x-4">
-                                    <span class="text-gray-600">${video.views} visualizações</span>
-                                    <button onclick="toggleLike(${video.id})" 
-                                            class="flex items-center space-x-1 ${video.user_liked ? 'text-blue-600' : 'text-gray-600'}">
-                                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                            <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
-                                        </svg>
-                                        <span>${video.likes}</span>
-                                    </button>
-                                </div>
-                                <div class="text-gray-600">
-                                    Publicado por ${video.username}
-                                </div>
-                            </div>
-                            <p class="mt-4 text-gray-700">${video.description || ''}</p>
-                            ${video.hashtags ? `
-                                <div class="mt-4 flex flex-wrap gap-2">
-                                    ${video.hashtags.split(' ').map(tag => `
-                                        <span class="px-2 py-1 bg-gray-100 rounded-full text-sm text-gray-600">
-                                            ${tag}
-                                        </span>
-                                    `).join('')}
-                                </div>
-                            ` : ''}
+    showLoading();
+    try {
+        const response = await fetch(`${API_URL}/videos/${videoId}`, {
+            headers: currentUser ? {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            } : {}
+        });
+        const video = await response.json();
+        
+        const videoPage = document.getElementById('videoPage');
+        videoPage.innerHTML = `
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <video 
+                    src="${API_URL}/uploads/${video.filename}"
+                    controls
+                    class="w-full aspect-video"
+                    data-video-id="${videoId}"
+                    onplay="incrementViews(${videoId})"
+                ></video>
+                <div class="p-6">
+                    <h1 class="text-2xl font-bold">${video.title}</h1>
+                    <div class="mt-2 flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <span class="text-gray-600">${video.views} visualizações</span>
+                            <button onclick="toggleLike(${videoId})" 
+                                    class="flex items-center space-x-1 ${video.user_liked ? 'text-blue-600' : 'text-gray-600'}">
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+                                </svg>
+                                <span>${video.likes}</span>
+                            </button>
+                        </div>
+                        <div class="text-gray-600">
+                            Publicado por ${video.username}
                         </div>
                     </div>
-                    <div class="mt-8">
-                        <h2 class="text-xl font-bold mb-4">Comentários</h2>
-                        ${currentUser ? `
-                            <form onsubmit="addComment(event, ${video.id})" class="mb-6">
-                                <textarea id="commentText" 
-                                          class="w-full px-3 py-2 border border-gray-300 rounded-md"
-                                          placeholder="Adicione um comentário..."
-                                          required></textarea>
-                                <button type="submit" 
-                                        class="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                                    Comentar
-                                </button>
-                            </form>
-                        ` : `
-                            <p class="text-gray-600 mb-6">
-                                <a href="#" onclick="showPage('login')" class="text-blue-600">Faça login</a>
-                                para comentar
-                            </p>
-                        `}
-                        <div id="commentsList"></div>
-                    </div>
-                `;
-                
-                showPage('video');
-                fetchComments(videoId);
-                if (!video.viewed) {
-                    incrementViews(videoId);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Erro ao carregar vídeo');
-            } finally {
-                hideLoading();
-            }
-        };
+                    <p class="mt-4 text-gray-700">${video.description || ''}</p>
+                    ${video.hashtags ? `
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            ${video.hashtags.split(' ').map(tag => `
+                                <span class="px-2 py-1 bg-gray-100 rounded-full text-sm text-gray-600">
+                                    ${tag}
+                                </span>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+            <div class="mt-8">
+                <h2 class="text-xl font-bold mb-4">Comentários</h2>
+                ${currentUser ? `
+                    <form onsubmit="addComment(event, ${videoId})" class="mb-6">
+                        <textarea id="commentText" 
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                  placeholder="Adicione um comentário..."
+                                  required></textarea>
+                        <button type="submit" 
+                                class="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                            Comentar
+                        </button>
+                    </form>
+                ` : `
+                    <p class="text-gray-600 mb-6">
+                        <a href="#" onclick="showPage('login')" class="text-blue-600">Faça login</a>
+                        para comentar
+                    </p>
+                `}
+                <div id="commentsList"></div>
+            </div>
+        `;
+        
+        showPage('video');
+        fetchComments(videoId);
+        if (!video.viewed) {
+            incrementViews(videoId);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Erro ao carregar vídeo');
+    } finally {
+        hideLoading();
+    }
+};
 
         const incrementViews = async (videoId) => {
             try {
@@ -467,6 +468,46 @@
                 console.error('Error:', error);
             }
         };
+
+        const toggleCommentLike = async (commentId) => {
+    if (!currentUser) {
+        showPage('login');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/comments/${commentId}/like`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        
+        if (!response.ok) {
+            // Se o comentário já está curtido, tenta remover o like
+            if (response.status === 400) {
+                const deleteResponse = await fetch(`${API_URL}/comments/${commentId}/like`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                if (!deleteResponse.ok) {
+                    throw new Error('Erro ao remover like do comentário');
+                }
+            } else {
+                throw new Error('Erro ao curtir comentário');
+            }
+        }
+
+        // Recarrega os comentários para atualizar o estado
+        const videoId = document.querySelector('video').getAttribute('data-video-id');
+        await fetchComments(videoId);
+    } catch (error) {
+        console.error('Error:', error);
+        alert(error.message);
+    }
+};
 
         const addComment = async (event, videoId) => {
             event.preventDefault();
