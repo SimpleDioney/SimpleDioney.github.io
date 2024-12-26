@@ -1,534 +1,601 @@
-<html>
-  <head>
-    <base href="/" />
-    <!DOCTYPE html>
-    <html lang="pt-BR">
-      <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>SaltPixel!</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
-          rel="stylesheet"
-        />
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VideoShare</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .video-card {
+            transition: transform 0.2s;
+        }
+        
+        .video-card:hover {
+            transform: translateY(-4px);
+        }
 
-        <style>
-          @font-face {
-            font-family: "Press Start 2P";
-            src: url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
-          }
+        .hidden {
+            display: none;
+        }
 
-          .pixel-font {
-            font-family: "Press Start 2P", cursive;
-          }
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
 
-          .wave {
+        .video-preview {
+            position: relative;
+            padding-top: 56.25%;
+        }
+
+        .video-preview video {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 25%;
-            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
-            clip-path: polygon(
-              0 0,
-              100% 0,
-              100% 85%,
-              95% 87%,
-              90% 86%,
-              85% 88%,
-              80% 87%,
-              75% 89%,
-              70% 88%,
-              65% 90%,
-              60% 89%,
-              55% 91%,
-              50% 90%,
-              45% 92%,
-              40% 91%,
-              35% 93%,
-              30% 92%,
-              25% 94%,
-              20% 93%,
-              15% 95%,
-              10% 94%,
-              5% 96%,
-              0 95%
-            );
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            animation: waveAnimation 8s ease-in-out infinite;
-          }
-
-          @keyframes waveAnimation {
-            0% {
-              clip-path: polygon(
-                0 0,
-                100% 0,
-                100% 85%,
-                95% 87%,
-                90% 86%,
-                85% 88%,
-                80% 87%,
-                75% 89%,
-                70% 88%,
-                65% 90%,
-                60% 89%,
-                55% 91%,
-                50% 90%,
-                45% 92%,
-                40% 91%,
-                35% 93%,
-                30% 92%,
-                25% 94%,
-                20% 93%,
-                15% 95%,
-                10% 94%,
-                5% 96%,
-                0 95%
-              );
-            }
-            50% {
-              clip-path: polygon(
-                0 0,
-                100% 0,
-                100% 87%,
-                95% 89%,
-                90% 88%,
-                85% 90%,
-                80% 89%,
-                75% 91%,
-                70% 90%,
-                65% 92%,
-                60% 91%,
-                55% 93%,
-                50% 92%,
-                45% 94%,
-                40% 93%,
-                35% 95%,
-                30% 94%,
-                25% 96%,
-                20% 95%,
-                15% 97%,
-                10% 96%,
-                5% 98%,
-                0 97%
-              );
-            }
-            100% {
-              clip-path: polygon(
-                0 0,
-                100% 0,
-                100% 85%,
-                95% 87%,
-                90% 86%,
-                85% 88%,
-                80% 87%,
-                75% 89%,
-                70% 88%,
-                65% 90%,
-                60% 89%,
-                55% 91%,
-                50% 90%,
-                45% 92%,
-                40% 91%,
-                35% 93%,
-                30% 92%,
-                25% 94%,
-                20% 93%,
-                15% 95%,
-                10% 94%,
-                5% 96%,
-                0 95%
-              );
-            }
-          }
-
-          .mode-box {
-        width: 100px;
-        height: 100px;
-        background: #ffffff;
-        border: 4px solid #e5e7eb;
-        border-radius: 15px;
-        cursor: pointer;
-        transition: all 0.2s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        position: relative;
-        overflow: hidden;
-    }
-
-          .mode-box:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-          }
-
-          .mode-box.selected {
-            border-color: #22c55e;
-            background: #f0fdf4;
-          }
-
-          .mode-box[data-mode="RACE"] {
-        background: linear-gradient(45deg, #9C27B0, #E91E63);
-    }
-
-    .mode-box[data-mode="RACE"] span {
-        color: white;
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-    }
-
-    .mode-box[data-mode="RACE"]::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 3px;
-        background: #FF1744;
-        animation: riseAnimation 2s infinite;
-    }
-
-    @keyframes riseAnimation {
-        0% {
-            transform: translateY(100%);
-        }
-        100% {
-            transform: translateY(-100%);
-        }
-    }
-
-    /* Modificar o seletor para o novo modo */
-    .mode-box.selected[data-mode="RACE"] {
-        border-color: #9C27B0;
-        background: linear-gradient(45deg, #9C27B0, #E91E63);
-        box-shadow: 0 0 15px rgba(156, 39, 176, 0.5);
-    }
-
-    /* Indicador de perigo para o modo Corrida */
-    #dangerIndicator {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 5px;
-        background: #FF1744;
-        opacity: 0.8;
-        display: none;
-    }
-
-    /* Animação de pulso para o indicador de perigo */
-    .danger-pulse {
-        animation: dangerPulse 0.5s infinite;
-    }
-
-    @keyframes dangerPulse {
-        0% { opacity: 0.8; }
-        50% { opacity: 0.4; }
-        100% { opacity: 0.8; }
-    }
-
-          .panel {
-            background: #363636;
-            border: 2px solid #e5e7eb;
-            min-height: 400px;
-            width: 300px;
-            border-radius: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          }
-
-          .green-button {
-            background: #22c55e;
-            box-shadow: 0 4px 0 #16a34a;
-            transition: all 0.1s;
-            border-radius: 15px;
-          }
-
-          .green-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 0 #16a34a;
-          }
-
-          .green-button:active {
-            transform: translateY(4px);
-            box-shadow: none;
-          }
-
-          #gameContainer {
-            display: none;
-            position: relative;
-            margin-top: 20px;
-          }
-
-          canvas {
-            border: 2px solid #333;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
-          }
-
-          #hud {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            font-family: "Press Start 2P", cursive;
-            font-size: 14px;
-            color: white;
-            text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
-          }
-
-          #powerUpIndicator {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            gap: 10px;
-          }
-
-          .power-up-icon {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.2);
-            opacity: 0.5;
-            font-family: "Press Start 2P", cursive;
-            font-size: 12px;
-          }
-
-          .power-up-icon.active {
-            opacity: 1;
-            box-shadow: 0 0 10px #fff;
-          }
-
-          #gameOver {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9);
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            border: 2px solid #4caf50;
-            font-family: "Press Start 2P", cursive;
-            color: white;
-          }
-
-          .progress-bar {
-            width: 200px;
-            height: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            margin: 10px auto;
-            overflow: hidden;
-          }
-
-          .progress-fill {
             height: 100%;
-            background: #4caf50;
-            width: 0%;
-            transition: width 0.3s ease;
-          }
+            object-fit: cover;
+        }
 
-          .shop-item {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-          }
+        #mainContent > div {
+            display: none;
+        }
 
-          .shop-item .title {
-            font-weight: bold;
-            color: #ffd700;
-          }
-
-          .shop-item .description {
-            font-size: 0.9em;
-            color: #ccc;
-          }
-
-          .shop-item .price {
-            color: #4caf50;
-          }
-
-          .shop-item .level {
-            font-size: 0.8em;
-            color: #888;
-          }
-
-          .shop-item button {
-            background: #4caf50;
-            color: white;
-            padding: 8px;
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
-          }
-
-          .shop-item button:disabled {
-            background: #666;
-            cursor: not-allowed;
-          }
-        </style>
-      </head>
-      <body class="bg-sky-400 min-h-screen overflow-hidden">
-        <div id="mainMenu">
-          <div class="wave"></div>
-
-          <div class="relative z-10">
-            <h1
-              class="text-center pt-12 pixel-font text-5xl md:text-6xl tracking-widest flex justify-center gap-2"
-            >
-              <span style="color: #ff0000">S</span>
-              <span style="color: #00ff00">a</span>
-              <span style="color: #0000ff">l</span>
-              <span style="color: #00ffff">t</span>
-              <span style="color: #3d1a8f">aㅤ</span>
-              <span style="color: #ffd700">P</span>
-              <span style="color: #8a2be2">i</span>
-              <span style="color: #98fb98">x</span>
-              <span style="color: #ff1493">e</span>
-              <span style="color: #ff69b4">l</span>
-              <span style="color: #ff69b4">!</span>
-            </h1>
-
-            <div class="flex justify-between px-20 mt-60">
-              <div class="panel p-6 rounded-2xl">
-                <h2 class="pixel-font text-gray-800 text-lg mb-4">Histórico</h2>
-              </div>
-
-              <div class="flex flex-col items-center gap-10">
-                <button
-                  class="px-10 py-5 green-button text-white pixel-font text-xl"
-                >
-                  Começar a pular!
-                </button>
-
-                <div class="text-center">
-                  <p class="text-gray-700 pixel-font mb-6 text-lg">
-                    Selecione o modo:
-                  </p>
-                  <div class="flex gap-6 flex-wrap justify-center">
-                    <div class="mode-box" data-mode="CLASSIC">
-                      <span class="pixel-font text-sm text-gray-600"
-                        >Clássico</span
-                      >
-                    </div>
-                    <div class="mode-box" data-mode="CHALLENGE">
-                      <span class="pixel-font text-sm text-gray-600"
-                        >Desafio</span
-                      >
-                    </div>
-                    <div class="mode-box" data-mode="EXTREME">
-                      <span class="pixel-font text-sm text-gray-600"
-                        >Extremo</span
-                      >
-                    </div>
-                    <div class="mode-box" data-mode="RACE">
-                      <span class="pixel-font text-sm text-gray-600"
-                        >Corrida</span
-                      >
-                    </div>
-                  </div>
+        #mainContent > div.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="#" onclick="showPage('home')" class="flex items-center space-x-2">
+                        <svg class="h-8 w-8 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <line x1="10" y1="9" x2="8" y2="9"></line>
+                        </svg>
+                        <span class="text-xl font-bold">VideoShare</span>
+                    </a>
                 </div>
-              </div>
 
-              <div class="panel p-6 rounded-2xl">
-                <h2 class="pixel-font text-gray-800 text-lg mb-4">
-                  Detalhes do modo
-                </h2>
-                <div class="space-y-4">
-                  <div class="bg-gray-50 p-3 rounded-lg">
-                    <p class="text-sm text-gray-600">
-                      Selecione um modo para ver os detalhes
-                    </p>
-                  </div>
+                <div class="flex-1 max-w-xl px-4">
+                    <div class="relative">
+                        <input
+                            type="text"
+                            id="searchInput"
+                            placeholder="Pesquisar vídeos..."
+                            class="w-full px-4 py-2 rounded-full border focus:outline-none focus:border-blue-500"
+                        >
+                        <button id="searchButton" class="absolute right-3 top-2">
+                            <svg class="h-5 w-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
-              </div>
+
+                <div class="flex items-center space-x-4" id="navButtons">
+                    <!-- Navigation buttons will be injected here -->
+                </div>
             </div>
-          </div>
         </div>
+    </nav>
 
-        <div id="gameContainer">
-          <canvas id="gameCanvas"></canvas>
-          <div id="hud">
-            <div id="score">Pontuação: 0</div>
-            <div id="coins">Moedas: 0</div>
-            <div id="combo">Combo: x1</div>
-          </div>
-          <div id="powerUpIndicator">
-            <div id="doubleJumpIcon" class="power-up-icon">2x</div>
-            <div id="shieldIcon" class="power-up-icon">🛡️</div>
-            <div id="magnetIcon" class="power-up-icon">🧲</div>
-          </div>
-        </div>
-
-        <div id="gameOver">
-          <h2 class="text-2xl mb-4">Game Over!</h2>
-          <p>Sua pontuação: <span id="finalScore">0</span></p>
-          <p>Moedas coletadas: <span id="finalCoins">0</span></p>
-          <div class="progress-bar">
-            <div id="levelProgress" class="progress-fill"></div>
-          </div>
-          <p>Nível <span id="playerLevel">1</span></p>
-          <button
-            onclick="resetGame()"
-            class="green-button px-6 py-2 rounded mt-4"
-          >
-            Jogar Novamente
-          </button>
-          <button
-            onclick="showMainMenu()"
-            class="green-button px-6 py-2 rounded mt-2"
-          >
-            Menu Principal
-          </button>
-        </div>
-
-        <button
-          id="openShop"
-          class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-full shadow-lg flex items-center gap-2"
-        >
-          <span>Loja</span>
-          <span id="shopCoins">0</span>
-          <span>🪙</span>
-        </button>
-
-        <div
-          id="shopModal"
-          class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center"
-        >
-          <div class="bg-gray-800 p-6 rounded-lg max-w-md w-full mx-4 relative">
-            <button
-              id="closeShop"
-              class="absolute top-4 right-4 text-gray-400 hover:text-white"
-            >
-              ✕
-            </button>
-
-            <h2 class="text-2xl text-white mb-4 font-['Press_Start_2P']">
-              Loja
-            </h2>
-
-            <div class="flex items-center mb-6 bg-purple-900 p-3 rounded-lg">
-              <span class="text-white mr-2">Suas moedas:</span>
-              <span id="modalCoins" class="text-yellow-400 font-bold">0</span>
-              <span class="text-yellow-400 ml-1">🪙</span>
+    <!-- Main Content -->
+    <main class="pt-20 pb-8 px-4 max-w-7xl mx-auto">
+        <div id="mainContent">
+            <!-- Home Page -->
+            <div id="homePage" class="active">
+                <div id="videoGrid" class="video-grid">
+                    <!-- Videos will be injected here -->
+                </div>
             </div>
 
-            <div class="grid gap-4" id="shopItems">
-              <!-- Items serão inseridos aqui via JavaScript -->
-            </div>
-          </div>
-        </div>
+            <!-- Login Page -->
+            <div id="loginPage" class="max-w-md mx-auto">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900">Bem-vindo de volta</h2>
+                    <p class="mt-2 text-gray-600">Entre para continuar no VideoShare</p>
+                </div>
 
-        <script src="index.js"></script>
-      </body>
-    </html>
-  </head>
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <form id="loginForm" class="space-y-6">
+                        <div>
+                            <label for="loginEmail" class="block text-sm font-medium text-gray-700">Email</label>
+                            <input type="email" id="loginEmail" required 
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                        </div>
+                        <div>
+                            <label for="loginPassword" class="block text-sm font-medium text-gray-700">Senha</label>
+                            <input type="password" id="loginPassword" required 
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                        </div>
+                        <button type="submit" 
+                                class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700">
+                            Entrar
+                        </button>
+                    </form>
+                    <div class="mt-6 text-center">
+                        <p class="text-sm text-gray-600">
+                            Não tem uma conta?
+                            <a href="#" onclick="showPage('register')" class="text-blue-600 hover:text-blue-500">
+                                Registre-se
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Register Page -->
+            <div id="registerPage" class="max-w-md mx-auto">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900">Criar conta</h2>
+                    <p class="mt-2 text-gray-600">Comece a compartilhar seus vídeos</p>
+                </div>
+
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <form id="registerForm" class="space-y-6">
+                        <div>
+                            <label for="registerUsername" class="block text-sm font-medium text-gray-700">Username</label>
+                            <input type="text" id="registerUsername" required 
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                        </div>
+                        <div>
+                            <label for="registerEmail" class="block text-sm font-medium text-gray-700">Email</label>
+                            <input type="email" id="registerEmail" required 
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                        </div>
+                        <div>
+                            <label for="registerPassword" class="block text-sm font-medium text-gray-700">Senha</label>
+                            <input type="password" id="registerPassword" required 
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                        </div>
+                        <button type="submit" 
+                                class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700">
+                            Registrar
+                        </button>
+                    </form>
+                    <div class="mt-6 text-center">
+                        <p class="text-sm text-gray-600">
+                            Já tem uma conta?
+                            <a href="#" onclick="showPage('login')" class="text-blue-600 hover:text-blue-500">
+                                Faça login
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload Page -->
+            <div id="uploadPage" class="max-w-2xl mx-auto">
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold mb-6">Upload de Vídeo</h2>
+                    <form id="uploadForm" class="space-y-6">
+                        <div>
+                            <label for="videoFile" class="block text-sm font-medium text-gray-700">Arquivo de Vídeo</label>
+                            <input type="file" id="videoFile" accept="video/*" required
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                        </div>
+                        <div>
+                            <label for="videoTitle" class="block text-sm font-medium text-gray-700">Título</label>
+                            <input type="text" id="videoTitle" required
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                        </div>
+                        <div>
+                            <label for="videoDescription" class="block text-sm font-medium text-gray-700">Descrição</label>
+                            <textarea id="videoDescription" rows="3"
+                                      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></textarea>
+                        </div>
+                        <div>
+                            <label for="videoHashtags" class="block text-sm font-medium text-gray-700">Hashtags</label>
+                            <input type="text" id="videoHashtags" placeholder="#exemplo #video"
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                        </div>
+                        <button type="submit"
+                                class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700">
+                            Enviar Vídeo
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Video View Page -->
+            <div id="videoPage" class="max-w-4xl mx-auto">
+                <!-- Video content will be injected here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading Spinner -->
+    <div id="loading" class="loading hidden">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+    </div>
+
+    <script>
+        const API_URL = 'https://videoshare-fawn.vercel.app/';
+        let currentUser = null;
+
+        // Utility Functions
+        const showLoading = () => document.getElementById('loading').classList.remove('hidden');
+        const hideLoading = () => document.getElementById('loading').classList.add('hidden');
+
+        const showPage = (pageId) => {
+            document.querySelectorAll('#mainContent > div').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(`${pageId}Page`).classList.add('active');
+        };
+
+        // Auth Functions
+        const checkAuth = () => {
+            const token = localStorage.getItem('token');
+            const user = localStorage.getItem('user');
+            if (token && user) {
+                currentUser = JSON.parse(user);
+                updateNavigation(true);
+            } else {
+                updateNavigation(false);
+            }
+        };
+
+        const updateNavigation = (isLoggedIn) => {
+            const navButtons = document.getElementById('navButtons');
+            if (isLoggedIn) {
+                navButtons.innerHTML = `
+                    <a href="#" onclick="showPage('upload')" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600">
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <span>Upload</span>
+                    </a>
+                    <span class="text-gray-700">${currentUser.username}</span>
+                    <button onclick="logout()" class="text-gray-700 hover:text-blue-600">Sair</button>
+                `;
+            } else {
+                navButtons.innerHTML = `
+                    <a href="#" onclick="showPage('login')" class="text-gray-700 hover:text-blue-600">Login</a>
+                    <a href="#" onclick="showPage('register')" 
+                       class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700">
+                        Registrar
+                    </a>
+                `;
+            }
+        };
+
+        const logout = () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            currentUser = null;
+            updateNavigation(false);
+            showPage('home');
+        };
+
+        // Video Functions
+        const fetchVideos = async (page = 1, search = '') => {
+            showLoading();
+            try {
+                const url = new URL(`${API_URL}/videos`);
+                url.searchParams.append('page', page);
+                if (search) url.searchParams.append('search', search);
+
+                const response = await fetch(url);
+                const videos = await response.json();
+                
+                const videoGrid = document.getElementById('videoGrid');
+                videoGrid.innerHTML = videos.map(video => `
+                    <div class="video-card bg-white rounded-lg shadow-md overflow-hidden cursor-pointer" 
+                         onclick="viewVideo(${video.id})">
+                        <div class="video-preview">
+                            <video src="${API_URL}/uploads/${video.filename}" 
+                                   poster="/api/placeholder/400/225"></video>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold line-clamp-2">${video.title}</h3>
+                            <div class="mt-2 flex items-center text-gray-600 text-sm">
+                                <span>${video.username}</span>
+                                <span class="mx-2">•</span>
+                                <span>${video.views} visualizações</span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Erro ao carregar vídeos');
+            } finally {
+                hideLoading();
+            }
+        };
+
+        const viewVideo = async (videoId) => {
+            showLoading();
+            try {
+                const response = await fetch(`${API_URL}/videos/${videoId}`, {
+                    headers: currentUser ? {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    } : {}
+                });
+                const video = await response.json();
+                
+                const videoPage = document.getElementById('videoPage');
+                videoPage.innerHTML = `
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <video 
+                            src="${API_URL}/uploads/${video.filename}"
+                            controls
+                            class="w-full aspect-video"
+                            onplay="incrementViews(${video.id})"
+                        ></video>
+                        <div class="p-6">
+                            <h1 class="text-2xl font-bold">${video.title}</h1>
+                            <div class="mt-2 flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    <span class="text-gray-600">${video.views} visualizações</span>
+                                    <button onclick="toggleLike(${video.id})" 
+                                            class="flex items-center space-x-1 ${video.user_liked ? 'text-blue-600' : 'text-gray-600'}">
+                                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+                                        </svg>
+                                        <span>${video.likes}</span>
+                                    </button>
+                                </div>
+                                <div class="text-gray-600">
+                                    Publicado por ${video.username}
+                                </div>
+                            </div>
+                            <p class="mt-4 text-gray-700">${video.description || ''}</p>
+                            ${video.hashtags ? `
+                                <div class="mt-4 flex flex-wrap gap-2">
+                                    ${video.hashtags.split(' ').map(tag => `
+                                        <span class="px-2 py-1 bg-gray-100 rounded-full text-sm text-gray-600">
+                                            ${tag}
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                    <div class="mt-8">
+                        <h2 class="text-xl font-bold mb-4">Comentários</h2>
+                        ${currentUser ? `
+                            <form onsubmit="addComment(event, ${video.id})" class="mb-6">
+                                <textarea id="commentText" 
+                                          class="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                          placeholder="Adicione um comentário..."
+                                          required></textarea>
+                                <button type="submit" 
+                                        class="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                    Comentar
+                                </button>
+                            </form>
+                        ` : `
+                            <p class="text-gray-600 mb-6">
+                                <a href="#" onclick="showPage('login')" class="text-blue-600">Faça login</a>
+                                para comentar
+                            </p>
+                        `}
+                        <div id="commentsList"></div>
+                    </div>
+                `;
+                
+                showPage('video');
+                fetchComments(videoId);
+                if (!video.viewed) {
+                    incrementViews(videoId);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Erro ao carregar vídeo');
+            } finally {
+                hideLoading();
+            }
+        };
+
+        const incrementViews = async (videoId) => {
+            try {
+                await fetch(`${API_URL}/videos/${videoId}/view`);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        const toggleLike = async (videoId) => {
+            if (!currentUser) {
+                showPage('login');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/videos/${videoId}/like`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                if (response.ok) {
+                    viewVideo(videoId);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Erro ao curtir vídeo');
+            }
+        };
+
+        const fetchComments = async (videoId) => {
+            try {
+                const response = await fetch(`${API_URL}/videos/${videoId}/comments`);
+                const comments = await response.json();
+                
+                const commentsList = document.getElementById('commentsList');
+                commentsList.innerHTML = comments.map(comment => `
+                    <div class="bg-white p-4 rounded-lg shadow-sm mb-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="font-medium">${comment.username}</span>
+                                <p class="mt-1 text-gray-700">${comment.content}</p>
+                            </div>
+                            ${currentUser ? `
+                                <button onclick="toggleCommentLike(${comment.id})"
+                                        class="flex items-center space-x-1 ${comment.user_liked ? 'text-blue-600' : 'text-gray-600'}">
+                                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+                                    </svg>
+                                    <span>${comment.likes}</span>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        const addComment = async (event, videoId) => {
+            event.preventDefault();
+            const content = document.getElementById('commentText').value;
+            
+            try {
+                const response = await fetch(`${API_URL}/videos/${videoId}/comments`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ content })
+                });
+                
+                if (response.ok) {
+                    document.getElementById('commentText').value = '';
+                    fetchComments(videoId);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Erro ao adicionar comentário');
+            }
+        };
+
+        // Form Handlers
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify({
+                        id: data.id,
+                        username: data.username
+                    }));
+                    currentUser = {
+                        id: data.id,
+                        username: data.username
+                    };
+                    updateNavigation(true);
+                    showPage('home');
+                } else {
+                    throw new Error(data.error);
+                }
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('registerUsername').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+
+            try {
+                const response = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert('Conta criada com sucesso! Faça login para continuar.');
+                    showPage('login');
+                } else {
+                    throw new Error(data.error);
+                }
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('video', document.getElementById('videoFile').files[0]);
+            formData.append('title', document.getElementById('videoTitle').value);
+            formData.append('description', document.getElementById('videoDescription').value);
+            formData.append('hashtags', document.getElementById('videoHashtags').value);
+
+            try {
+                const response = await fetch(`${API_URL}/videos`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert('Vídeo enviado com sucesso!');
+                    showPage('home');
+                    fetchVideos();
+                } else {
+                    throw new Error(data.error);
+                }
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+
+        // Search Handler
+        document.getElementById('searchButton').addEventListener('click', () => {
+            const searchQuery = document.getElementById('searchInput').value;
+            fetchVideos(1, searchQuery);
+            showPage('home');
+        });
+
+        // Initialize
+        window.addEventListener('load', () => {
+            checkAuth();
+            fetchVideos();
+        });
+    </script>
+</body>
 </html>
