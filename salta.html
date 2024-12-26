@@ -52,6 +52,57 @@
         #mainContent > div.active {
             display: block;
         }
+
+        .reply-indent {
+            margin-left: 2rem;
+            padding-left: 1rem;
+            border-left: 2px solid #e5e7eb;
+        }
+
+        .hashtag {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .hashtag:hover {
+            background-color: #e5e7eb;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .stat-box {
+            background-color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Adicionando animações */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .comment-form-transition {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .profile-header {
+            background-color: white;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
@@ -221,110 +272,320 @@
         </div>
     </main>
 
+    <div id="profilePage" class="max-w-4xl mx-auto">
+        <div class="profile-header">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold" id="profileUsername"></h1>
+                    <p class="text-gray-600 mt-1" id="profileJoinDate"></p>
+                </div>
+                <div id="followButtonContainer" class="hidden">
+                    <button id="followButton"
+                            class="px-6 py-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors">
+                        Seguir
+                    </button>
+                </div>
+            </div>
+
+            <div class="profile-stats mt-8">
+                <div class="stat-box">
+                    <div class="text-2xl font-bold" id="profileVideoCount">0</div>
+                    <div class="text-gray-600">Vídeos</div>
+                </div>
+                <div class="stat-box">
+                    <div class="text-2xl font-bold" id="profileFollowersCount">0</div>
+                    <div class="text-gray-600">Seguidores</div>
+                </div>
+                <div class="stat-box">
+                    <div class="text-2xl font-bold" id="profileFollowingCount">0</div>
+                    <div class="text-gray-600">Seguindo</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">Vídeos de <span id="profileUsernameVideos"></span></h2>
+            <div id="profileVideos" class="video-grid">
+                <!-- Videos do usuário serão carregados aqui -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Template para Respostas de Comentários -->
+    <template id="replyTemplate">
+        <div class="reply-indent fade-in mt-4">
+            <div class="flex items-start justify-between">
+                <div>
+                    <span class="font-medium">{username}</span>
+                    <p class="mt-1 text-gray-700">{content}</p>
+                    <div class="mt-2 text-sm text-gray-500">{date}</div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Template para Formulário de Resposta -->
+    <template id="replyFormTemplate">
+        <div class="reply-indent comment-form-transition mt-4">
+            <textarea class="w-full px-3 py-2 border border-gray-300 rounded-md resize-none"
+                      placeholder="Escreva uma resposta..."
+                      rows="3"></textarea>
+            <div class="mt-2 flex items-center justify-end space-x-2">
+                <button class="cancel-reply px-4 py-1 text-gray-600 hover:text-gray-800">
+                    Cancelar
+                </button>
+                <button class="submit-reply px-4 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                    Responder
+                </button>
+            </div>
+        </div>
+    </template>
+</div>
+</main>
+
+<div id="toast" class="fixed bottom-4 right-4 transition-all duration-300 transform translate-y-full opacity-0">
+    <div class="bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg">
+        <span id="toastMessage"></span>
+    </div>
+</div>
+
     <!-- Loading Spinner -->
     <div id="loading" class="loading hidden">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
     </div>
 
     <script>
-        const API_URL = 'https://videoshare-koku.onrender.com';
-        let currentUser = null;
+        // Configurações e variáveis globais
+const API_URL = 'https://videoshare-koku.onrender.com';
+let currentUser = null;
 
-        // Utility Functions
-        const showLoading = () => document.getElementById('loading').classList.remove('hidden');
-        const hideLoading = () => document.getElementById('loading').classList.add('hidden');
+// Funções de Utilidade
+const showLoading = () => document.getElementById('loading').classList.remove('hidden');
+const hideLoading = () => document.getElementById('loading').classList.add('hidden');
 
-        const showPage = (pageId) => {
-            document.querySelectorAll('#mainContent > div').forEach(page => {
-                page.classList.remove('active');
-            });
-            document.getElementById(`${pageId}Page`).classList.add('active');
-        };
+const showToast = (message, duration = 3000) => {
+    const toast = document.getElementById('toast');
+    const toastMessage = document.getElementById('toastMessage');
+    
+    toastMessage.textContent = message;
+    toast.classList.remove('translate-y-full', 'opacity-0');
+    
+    setTimeout(() => {
+        toast.classList.add('translate-y-full', 'opacity-0');
+    }, duration);
+};
 
-        // Auth Functions
-        const checkAuth = () => {
-            const token = localStorage.getItem('token');
-            const user = localStorage.getItem('user');
-            if (token && user) {
-                currentUser = JSON.parse(user);
-                updateNavigation(true);
-            } else {
-                updateNavigation(false);
+const showPage = (pageId) => {
+    document.querySelectorAll('#mainContent > div').forEach(page => {
+        page.classList.remove('active');
+    });
+    document.getElementById(`${pageId}Page`).classList.add('active');
+};
+
+// Funções de Autenticação
+const checkAuth = () => {
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    if (token && user) {
+        currentUser = JSON.parse(user);
+        updateNavigation(true);
+    } else {
+        updateNavigation(false);
+    }
+};
+
+const updateNavigation = (isLoggedIn) => {
+    const navButtons = document.getElementById('navButtons');
+    if (isLoggedIn) {
+        navButtons.innerHTML = `
+            <a href="#" onclick="showPage('upload')" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span>Upload</span>
+            </a>
+            <a href="#" onclick="showUserProfile(${currentUser.id})" class="text-gray-700 hover:text-blue-600">
+                ${currentUser.username}
+            </a>
+            <button onclick="logout()" class="text-gray-700 hover:text-blue-600">Sair</button>
+        `;
+    } else {
+        navButtons.innerHTML = `
+            <a href="#" onclick="showPage('login')" class="text-gray-700 hover:text-blue-600">Login</a>
+            <a href="#" onclick="showPage('register')" 
+               class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700">
+                Registrar
+            </a>
+        `;
+    }
+};
+
+const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    currentUser = null;
+    updateNavigation(false);
+    showPage('home');
+};
+
+// Funções de Perfil do Usuário
+const getUserProfile = async (userId) => {
+    try {
+        const response = await fetch(`${API_URL}/users/${userId}/profile`, {
+            headers: currentUser ? {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            } : {}
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('Error:', error);
+        throw new Error('Erro ao carregar perfil');
+    }
+};
+
+const checkFollowingStatus = async (userId) => {
+    if (!currentUser) return false;
+    try {
+        const response = await fetch(`${API_URL}/users/${userId}/following`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
-        };
+        });
+        const data = await response.json();
+        return data.following;
+    } catch (error) {
+        console.error('Error:', error);
+        return false;
+    }
+};
 
-        const updateNavigation = (isLoggedIn) => {
-            const navButtons = document.getElementById('navButtons');
-            if (isLoggedIn) {
-                navButtons.innerHTML = `
-                    <a href="#" onclick="showPage('upload')" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600">
-                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="17 8 12 3 7 8"></polyline>
-                            <line x1="12" y1="3" x2="12" y2="15"></line>
-                        </svg>
-                        <span>Upload</span>
-                    </a>
-                    <span class="text-gray-700">${currentUser.username}</span>
-                    <button onclick="logout()" class="text-gray-700 hover:text-blue-600">Sair</button>
-                `;
-            } else {
-                navButtons.innerHTML = `
-                    <a href="#" onclick="showPage('login')" class="text-gray-700 hover:text-blue-600">Login</a>
-                    <a href="#" onclick="showPage('register')" 
-                       class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700">
-                        Registrar
-                    </a>
-                `;
+const toggleFollow = async (userId) => {
+    if (!currentUser) {
+        showPage('login');
+        return;
+    }
+
+    try {
+        const method = await checkFollowingStatus(userId) ? 'DELETE' : 'POST';
+        const response = await fetch(`${API_URL}/users/${userId}/follow`, {
+            method,
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
-        };
+        });
 
-        const logout = () => {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            currentUser = null;
-            updateNavigation(false);
-            showPage('home');
-        };
+        if (response.ok) {
+            showUserProfile(userId);
+            showToast(method === 'POST' ? 'Seguindo usuário' : 'Deixou de seguir usuário');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Erro ao atualizar seguidor');
+    }
+};
 
-        // Video Functions
-        const fetchVideos = async (page = 1, search = '') => {
-            showLoading();
-            try {
-                const url = new URL(`${API_URL}/videos`);
-                url.searchParams.append('page', page);
-                if (search) url.searchParams.append('search', search);
+const showUserProfile = async (userId) => {
+    try {
+        showLoading();
+        const profile = await getUserProfile(userId);
+        const isFollowing = await checkFollowingStatus(userId);
+        
+        document.getElementById('profileUsername').textContent = profile.username;
+        document.getElementById('profileUsernameVideos').textContent = profile.username;
+        document.getElementById('profileJoinDate').textContent = `Membro desde ${new Date(profile.created_at).toLocaleDateString()}`;
+        document.getElementById('profileVideoCount').textContent = profile.video_count;
+        document.getElementById('profileFollowersCount').textContent = profile.followers_count;
+        document.getElementById('profileFollowingCount').textContent = profile.following_count;
+        
+        const followButtonContainer = document.getElementById('followButtonContainer');
+        const followButton = document.getElementById('followButton');
+        
+        if (currentUser && currentUser.id !== userId) {
+            followButtonContainer.classList.remove('hidden');
+            followButton.textContent = isFollowing ? 'Deixar de Seguir' : 'Seguir';
+            followButton.onclick = () => toggleFollow(userId);
+            followButton.className = `px-6 py-2 rounded-full transition-colors ${
+                isFollowing 
+                    ? 'bg-gray-200 text-gray-800 hover:bg-gray-300' 
+                    : 'bg-blue-600 text-white hover:bg-blue-700'
+            }`;
+        } else {
+            followButtonContainer.classList.add('hidden');
+        }
 
-                const response = await fetch(url);
-                const videos = await response.json();
-                
-                const videoGrid = document.getElementById('videoGrid');
-                videoGrid.innerHTML = videos.map(video => `
-                    <div class="video-card bg-white rounded-lg shadow-md overflow-hidden cursor-pointer" 
-                         onclick="viewVideo(${video.id})">
-                        <div class="video-preview">
-                            <video src="${API_URL}/uploads/${video.filename}" 
-                                   poster="/api/placeholder/400/225"></video>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="text-lg font-semibold line-clamp-2">${video.title}</h3>
-                            <div class="mt-2 flex items-center text-gray-600 text-sm">
-                                <span>${video.username}</span>
-                                <span class="mx-2">•</span>
-                                <span>${video.views} visualizações</span>
-                            </div>
-                        </div>
+        // Carregar vídeos do usuário
+        const response = await fetch(`${API_URL}/users/${userId}/videos`);
+        const videos = await response.json();
+        
+        const profileVideos = document.getElementById('profileVideos');
+        profileVideos.innerHTML = videos.length ? videos.map(video => `
+            <div class="video-card bg-white rounded-lg shadow-md overflow-hidden cursor-pointer" 
+                 onclick="viewVideo(${video.id})">
+                <div class="video-preview">
+                    <video src="${API_URL}/uploads/${video.filename}" 
+                           poster="/api/placeholder/400/225"></video>
+                </div>
+                <div class="p-4">
+                    <h3 class="text-lg font-semibold line-clamp-2">${video.title}</h3>
+                    <div class="mt-2 flex items-center text-gray-600 text-sm">
+                        <span>${video.views} visualizações</span>
+                        <span class="mx-2">•</span>
+                        <span>${video.likes} curtidas</span>
                     </div>
-                `).join('');
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Erro ao carregar vídeos');
-            } finally {
-                hideLoading();
-            }
-        };
+                </div>
+            </div>
+        `).join('') : '<p class="text-gray-600">Nenhum vídeo publicado</p>';
+        
+        showPage('profile');
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Erro ao carregar perfil');
+    } finally {
+        hideLoading();
+    }
+};
 
-        const viewVideo = async (videoId) => {
+// Funções de Vídeo
+const fetchVideos = async (page = 1, search = '') => {
+    showLoading();
+    try {
+        const url = new URL(`${API_URL}/videos`);
+        url.searchParams.append('page', page);
+        if (search) url.searchParams.append('search', search);
+
+        const response = await fetch(url);
+        const videos = await response.json();
+        
+        const videoGrid = document.getElementById('videoGrid');
+        videoGrid.innerHTML = videos.map(video => `
+            <div class="video-card bg-white rounded-lg shadow-md overflow-hidden cursor-pointer" 
+                 onclick="viewVideo(${video.id})">
+                <div class="video-preview">
+                    <video src="${API_URL}/uploads/${video.filename}" 
+                           poster="/api/placeholder/400/225"></video>
+                </div>
+                <div class="p-4">
+                    <h3 class="text-lg font-semibold line-clamp-2">${video.title}</h3>
+                    <div class="mt-2 flex items-center text-gray-600 text-sm">
+                        <span onclick="event.stopPropagation(); showUserProfile(${video.user_id})" 
+                              class="hover:text-blue-600 cursor-pointer">${video.username}</span>
+                        <span class="mx-2">•</span>
+                        <span>${video.views} visualizações</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Erro ao carregar vídeos');
+    } finally {
+        hideLoading();
+    }
+};
+
+const viewVideo = async (videoId) => {
     showLoading();
     try {
         const response = await fetch(`${API_URL}/videos/${videoId}`, {
@@ -358,14 +619,18 @@
                             </button>
                         </div>
                         <div class="text-gray-600">
-                            Publicado por ${video.username}
+                            <span onclick="showUserProfile(${video.user_id})" 
+                                  class="hover:text-blue-600 cursor-pointer">
+                                Publicado por ${video.username}
+                            </span>
                         </div>
                     </div>
                     <p class="mt-4 text-gray-700">${video.description || ''}</p>
                     ${video.hashtags ? `
                         <div class="mt-4 flex flex-wrap gap-2">
                             ${video.hashtags.split(' ').map(tag => `
-                                <span class="px-2 py-1 bg-gray-100 rounded-full text-sm text-gray-600">
+                                <span onclick="searchByHashtag('${tag}')"
+                                      class="hashtag px-2 py-1 bg-gray-100 rounded-full text-sm text-gray-600">
                                     ${tag}
                                 </span>
                             `).join('')}
@@ -403,73 +668,152 @@
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Erro ao carregar vídeo');
+        showToast('Erro ao carregar vídeo');
     } finally {
         hideLoading();
     }
 };
 
-        const incrementViews = async (videoId) => {
-            try {
-                await fetch(`${API_URL}/videos/${videoId}/view`);
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        };
+const searchByHashtag = (hashtag) => {
+    document.getElementById('searchInput').value = hashtag;
+    fetchVideos(1, hashtag);
+    showPage('home');
+};
 
-        const toggleLike = async (videoId) => {
-            if (!currentUser) {
-                showPage('login');
-                return;
-            }
+const incrementViews = async (videoId) => {
+    try {
+        await fetch(`${API_URL}/videos/${videoId}/view`);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
 
-            try {
-                const response = await fetch(`${API_URL}/videos/${videoId}/like`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-                if (response.ok) {
-                    viewVideo(videoId);
+const toggleLike = async (videoId) => {
+    if (!currentUser) {
+        showPage('login');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/videos/${videoId}/like`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        if (!response.ok && response.status === 400) {
+            // Se já curtiu, remove o like
+            await fetch(`${API_URL}/videos/${videoId}/like`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Erro ao curtir vídeo');
-            }
-        };
+            });
+        }
 
-        const fetchComments = async (videoId) => {
-            try {
-                const response = await fetch(`${API_URL}/videos/${videoId}/comments`);
-                const comments = await response.json();
-                
-                const commentsList = document.getElementById('commentsList');
-                commentsList.innerHTML = comments.map(comment => `
-                    <div class="bg-white p-4 rounded-lg shadow-sm mb-4">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <span class="font-medium">${comment.username}</span>
-                                <p class="mt-1 text-gray-700">${comment.content}</p>
-                            </div>
+        viewVideo(videoId);
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Erro ao curtir vídeo');
+    }
+};
+
+// Funções de Comentários
+const fetchComments = async (videoId) => {
+    try {
+        const response = await fetch(`${API_URL}/videos/${videoId}/comments`, {
+            headers: currentUser ? {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            } : {}
+        });
+        const comments = await response.json();
+        
+        const commentsList = document.getElementById('commentsList');
+        commentsList.innerHTML = comments.map(comment => `
+            <div class="bg-white p-4 rounded-lg shadow-sm mb-4">
+                <div class="flex justify-between items-start">
+                    <div class="flex-grow">
+                        <span onclick="showUserProfile(${comment.user_id})" 
+                              class="font-medium hover:text-blue-600 cursor-pointer">
+                            ${comment.username}
+                        </span>
+                        <p class="mt-1 text-gray-700">${comment.content}</p>
+                        <div class="mt-2 flex items-center space-x-4">
                             ${currentUser ? `
                                 <button onclick="toggleCommentLike(${comment.id})"
                                         class="flex items-center space-x-1 ${comment.user_liked ? 'text-blue-600' : 'text-gray-600'}">
-                                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                         <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
                                     </svg>
                                     <span>${comment.likes}</span>
                                 </button>
+                                <button onclick="showReplyForm(${comment.id})" 
+                                        class="text-sm text-gray-600 hover:text-blue-600">
+                                    Responder
+                                </button>
+                            ` : ''}
+                            ${comment.replies_count > 0 ? `
+                                <button onclick="toggleReplies(${comment.id})" 
+                                        class="text-sm text-gray-600 hover:text-blue-600">
+                                    ${comment.replies_count} ${comment.replies_count === 1 ? 'resposta' : 'respostas'}
+                                </button>
                             ` : ''}
                         </div>
+                        <div id="replyForm-${comment.id}" class="hidden mt-3">
+                            <textarea class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                      rows="2"
+                                      placeholder="Escreva uma resposta..."></textarea>
+                            <div class="mt-2 flex justify-end space-x-2">
+                                <button onclick="hideReplyForm(${comment.id})"
+                                        class="px-3 py-1 text-sm text-gray-600 hover:text-gray-800">
+                                    Cancelar
+                                </button>
+                                <button onclick="submitReply(${comment.id})"
+                                        class="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                    Responder
+                                </button>
+                            </div>
+                        </div>
+                        <div id="replies-${comment.id}" class="hidden mt-3"></div>
                     </div>
-                `).join('');
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        };
+                </div>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Erro ao carregar comentários');
+    }
+};
 
-        const toggleCommentLike = async (commentId) => {
+const addComment = async (event, videoId) => {
+    event.preventDefault();
+    const content = document.getElementById('commentText').value.trim();
+    
+    if (!content) return;
+    
+    try {
+        const response = await fetch(`${API_URL}/videos/${videoId}/comments`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({ content })
+        });
+        
+        if (response.ok) {
+            document.getElementById('commentText').value = '';
+            await fetchComments(videoId);
+            showToast('Comentário adicionado com sucesso');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Erro ao adicionar comentário');
+    }
+};
+
+const toggleCommentLike = async (commentId) => {
     if (!currentUser) {
         showPage('login');
         return;
@@ -483,160 +827,208 @@
             }
         });
         
-        if (!response.ok) {
-            // Se o comentário já está curtido, tenta remover o like
-            if (response.status === 400) {
-                const deleteResponse = await fetch(`${API_URL}/comments/${commentId}/like`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-                if (!deleteResponse.ok) {
-                    throw new Error('Erro ao remover like do comentário');
+        if (!response.ok && response.status === 400) {
+            await fetch(`${API_URL}/comments/${commentId}/like`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
-            } else {
-                throw new Error('Erro ao curtir comentário');
-            }
+            });
         }
 
-        // Recarrega os comentários para atualizar o estado
         const videoId = document.querySelector('video').getAttribute('data-video-id');
         await fetchComments(videoId);
     } catch (error) {
         console.error('Error:', error);
-        alert(error.message);
+        showToast('Erro ao interagir com o comentário');
     }
 };
 
-        const addComment = async (event, videoId) => {
-            event.preventDefault();
-            const content = document.getElementById('commentText').value;
-            
-            try {
-                const response = await fetch(`${API_URL}/videos/${videoId}/comments`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    },
-                    body: JSON.stringify({ content })
-                });
-                
-                if (response.ok) {
-                    document.getElementById('commentText').value = '';
-                    fetchComments(videoId);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Erro ao adicionar comentário');
-            }
-        };
+const showReplyForm = (commentId) => {
+    document.getElementById(`replyForm-${commentId}`).classList.remove('hidden');
+};
 
-        // Form Handlers
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
+const hideReplyForm = (commentId) => {
+    document.getElementById(`replyForm-${commentId}`).classList.add('hidden');
+};
 
-            try {
-                const response = await fetch(`${API_URL}/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
+const submitReply = async (commentId) => {
+    const textarea = document.querySelector(`#replyForm-${commentId} textarea`);
+    const content = textarea.value.trim();
+    
+    if (!content) return;
 
-                const data = await response.json();
-                if (response.ok) {
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('user', JSON.stringify({
-                        id: data.id,
-                        username: data.username
-                    }));
-                    currentUser = {
-                        id: data.id,
-                        username: data.username
-                    };
-                    updateNavigation(true);
-                    showPage('home');
-                } else {
-                    throw new Error(data.error);
-                }
-            } catch (error) {
-                alert(error.message);
-            }
+    try {
+        const response = await fetch(`${API_URL}/comments/${commentId}/replies`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({ content })
         });
 
-        document.getElementById('registerForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        if (response.ok) {
+            textarea.value = '';
+            hideReplyForm(commentId);
+            const videoId = document.querySelector('video').getAttribute('data-video-id');
+            await fetchComments(videoId);
+            await toggleReplies(commentId, true);
+            showToast('Resposta adicionada com sucesso');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Erro ao adicionar resposta');
+    }
+};
+
+const toggleReplies = async (commentId, forceShow = false) => {
+    const repliesDiv = document.getElementById(`replies-${commentId}`);
+    const isHidden = repliesDiv.classList.contains('hidden');
+    
+    if (isHidden || forceShow) {
+        try {
+            const response = await fetch(`${API_URL}/comments/${commentId}/replies`);
+            const replies = await response.json();
             
-            const username = document.getElementById('registerUsername').value;
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
+            repliesDiv.innerHTML = replies.map(reply => `
+                <div class="mt-3 pl-4 border-l-2 border-gray-200">
+                    <span onclick="showUserProfile(${reply.user_id})" 
+                          class="font-medium hover:text-blue-600 cursor-pointer">
+                        ${reply.username}
+                    </span>
+                    <p class="mt-1 text-gray-700">${reply.content}</p>
+                    <div class="mt-1 text-sm text-gray-500">
+                        ${new Date(reply.created_at).toLocaleString()}
+                    </div>
+                </div>
+            `).join('');
+            
+            repliesDiv.classList.remove('hidden');
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('Erro ao carregar respostas');
+        }
+    } else {
+        repliesDiv.classList.add('hidden');
+    }
+};
 
-            try {
-                const response = await fetch(`${API_URL}/register`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, email, password })
-                });
+// Event Listeners
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
 
-                const data = await response.json();
-                if (response.ok) {
-                    alert('Conta criada com sucesso! Faça login para continuar.');
-                    showPage('login');
-                } else {
-                    throw new Error(data.error);
-                }
-            } catch (error) {
-                alert(error.message);
-            }
+    try {
+        const response = await fetch(`${API_URL}/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
         });
 
-        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData();
-            formData.append('video', document.getElementById('videoFile').files[0]);
-            formData.append('title', document.getElementById('videoTitle').value);
-            formData.append('description', document.getElementById('videoDescription').value);
-            formData.append('hashtags', document.getElementById('videoHashtags').value);
-
-            try {
-                const response = await fetch(`${API_URL}/videos`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    },
-                    body: formData
-                });
-
-                const data = await response.json();
-                if (response.ok) {
-                    alert('Vídeo enviado com sucesso!');
-                    showPage('home');
-                    fetchVideos();
-                } else {
-                    throw new Error(data.error);
-                }
-            } catch (error) {
-                alert(error.message);
-            }
-        });
-
-        // Search Handler
-        document.getElementById('searchButton').addEventListener('click', () => {
-            const searchQuery = document.getElementById('searchInput').value;
-            fetchVideos(1, searchQuery);
+        const data = await response.json();
+        if (response.ok) {
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify({
+                id: data.id,
+                username: data.username
+            }));
+            currentUser = {
+                id: data.id,
+                username: data.username
+            };
+            updateNavigation(true);
             showPage('home');
+            showToast('Login realizado com sucesso');
+        } else {
+            throw new Error(data.error);
+        }
+    } catch (error) {
+        showToast(error.message);
+    }
+});
+
+document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const username = document.getElementById('registerUsername').value;
+    const email = document.getElementById('registerEmail').value;
+    const password = document.getElementById('registerPassword').value;
+
+    try {
+        const response = await fetch(`${API_URL}/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, email, password })
         });
 
-        // Initialize
-        window.addEventListener('load', () => {
-            checkAuth();
-            fetchVideos();
+        const data = await response.json();
+        if (response.ok) {
+            showToast('Conta criada com sucesso! Faça login para continuar.');
+            showPage('login');
+        } else {
+            throw new Error(data.error);
+        }
+    } catch (error) {
+        showToast(error.message);
+    }
+});
+
+document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    showLoading();
+    
+    const formData = new FormData();
+    formData.append('video', document.getElementById('videoFile').files[0]);
+    formData.append('title', document.getElementById('videoTitle').value);
+    formData.append('description', document.getElementById('videoDescription').value);
+    formData.append('hashtags', document.getElementById('videoHashtags').value);
+
+    try {
+        const response = await fetch(`${API_URL}/videos`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: formData
         });
+
+        const data = await response.json();
+        if (response.ok) {
+            showToast('Vídeo enviado com sucesso!');
+            showPage('home');
+            fetchVideos();
+        } else {
+            throw new Error(data.error);
+        }
+    } catch (error) {
+        showToast(error.message);
+    } finally {
+        hideLoading();
+    }
+});
+
+document.getElementById('searchButton').addEventListener('click', () => {
+    const searchQuery = document.getElementById('searchInput').value;
+    fetchVideos(1, searchQuery);
+    showPage('home');
+});
+
+document.getElementById('searchInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        const searchQuery = e.target.value;
+        fetchVideos(1, searchQuery);
+        showPage('home');
+    }
+});
+
+// Inicialização
+window.addEventListener('load', () => {
+    checkAuth();
+    fetchVideos();
+});
     </script>
 </body>
 </html>
